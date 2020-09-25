@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 import click
 import os
 import sys
-from werkzeug.security import generate_password_hash, check_password_hash
-
 
 WIN = sys.platform.startswith('win')
 if WIN:  # 如果是 Windows 系统，使用三个斜线
@@ -19,17 +17,10 @@ app.config['SECRET_KEY'] = 'dev'  # 等同于 app.secret_key = 'dev'
 # 在扩展类实例化前加载配置
 db = SQLAlchemy(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-    username = db.Column(db.String(20))  # 用户名
-    password_hash = db.Column(db.String(128))  # 密码散列值
 
-    def set_password(self, password):  # 用来设置密码的方法，接受密码作为参数
-        self.password_hash = generate_password_hash(password)  # 将生成的密码保持到对应字段
-
-    def validate_password(self, password):  # 用于验证密码的方法，接受密码作为参数
-        return check_password_hash(self.password_hash, password)  # 返回布尔值
+class User(db.Model):  # 表名将会是 user（自动生成，小写处理）
+    id = db.Column(db.Integer, primary_key=True)  # 主键
+    name = db.Column(db.String(20))  # 名字
 
 
 class Movie(db.Model):  # 表名将会是 movie
